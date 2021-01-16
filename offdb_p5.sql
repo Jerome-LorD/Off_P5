@@ -42,14 +42,14 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `offdb`.`products` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `product_name` VARCHAR(255) NULL DEFAULT NULL,
-  `brand` VARCHAR(255) NULL DEFAULT NULL,
-  `stores` VARCHAR(255) NULL DEFAULT NULL,
+  `name` VARCHAR(80) NULL DEFAULT NULL,
+  `brand` VARCHAR(80) NULL DEFAULT NULL,
+  `stores` VARCHAR(80) NULL DEFAULT NULL,
   `url` VARCHAR(255) NULL DEFAULT NULL,
   `nutriscore_id` INT(11) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `url_UNIQUE` (`url` ASC),
-  UNIQUE INDEX `product_UNIQUE` (`product_name` ASC))
+  UNIQUE INDEX `product_UNIQUE` (`name` ASC))
 ENGINE = InnoDB
 AUTO_INCREMENT = 1718
 DEFAULT CHARACTER SET = utf8;
