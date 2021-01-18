@@ -19,7 +19,8 @@ USE `offdb` ;
 CREATE TABLE IF NOT EXISTS `offdb`.`categories` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(80) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
@@ -33,7 +34,6 @@ CREATE TABLE IF NOT EXISTS `offdb`.`nutriscore` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `type_UNIQUE` (`type` ASC))
 ENGINE = InnoDB
-AUTO_INCREMENT = 18
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -51,7 +51,6 @@ CREATE TABLE IF NOT EXISTS `offdb`.`products` (
   UNIQUE INDEX `url_UNIQUE` (`url` ASC),
   UNIQUE INDEX `product_UNIQUE` (`name` ASC))
 ENGINE = InnoDB
-AUTO_INCREMENT = 1718
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -62,15 +61,15 @@ CREATE TABLE IF NOT EXISTS `offdb`.`substitutes` (
   `id` INT(11) NOT NULL,
   `substitute_id` INT(11) NOT NULL,
   `substituted_id` INT(11) NOT NULL,
-  INDEX `fk_substitute_id_idx` USING BTREE (`substitute_id`),
-  INDEX `fk_substituted_id_idx` (`substituted_id` ASC),
+  INDEX `substitute_id_idx` USING BTREE (`substitute_id`),
+  INDEX `substituted_id_idx` (`substituted_id` ASC),
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_substitute_id`
+  CONSTRAINT `substitute_id`
     FOREIGN KEY (`substitute_id`)
     REFERENCES `offdb`.`products` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_substituted_id`
+  CONSTRAINT `substituted_id`
     FOREIGN KEY (`substituted_id`)
     REFERENCES `offdb`.`products` (`id`)
     ON DELETE NO ACTION
@@ -88,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `offdb`.`categories_products` (
   PRIMARY KEY (`categories_id`, `products_id`),
   INDEX `fk_categories_has_products_products1_idx` (`products_id` ASC),
   INDEX `fk_categories_has_products_categories1_idx` (`categories_id` ASC),
-  CONSTRAINT `fk_categories_has_products_categories1`
+  CONSTRAINT `fk_categories_has_products_categories`
     FOREIGN KEY (`categories_id`)
     REFERENCES `offdb`.`categories` (`id`)
     ON DELETE NO ACTION
