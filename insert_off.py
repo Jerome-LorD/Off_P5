@@ -91,7 +91,6 @@ class Downloader:
 
                 for category in categories:
                     category = category.strip()
-                    category = re.sub(r"\w{2}\:", "", category)
                     self.cursor.execute(
                         "INSERT IGNORE INTO categories (name)\
                             VALUES (%s);",
@@ -118,17 +117,24 @@ class Cleaner:
     """Clean all data."""
 
     validators: List = []
+    normalizers: List = []
 
     def is_valid(self, data):
-        """Vérify if the key has a value."""
+        """Verify if the key has a value"""
         for validator in self.validators:
             if not validator(data):
                 return False
         return True
 
+    def normalize(self, data):
+        """Normalize some entries."""
+        for normalizer in self.normalizers:
+            data = normalizer(data)
+        return data
+
     def clean(self, collection):
         """Return a data list if is_valid is True."""
-        return [data for data in collection if self.is_valid(data)]
+        return [self.normalize(data) for data in collection if self.is_valid(data)]
 
 
 def require_product_name_fr_not_empty(data):
@@ -146,6 +152,13 @@ def require_nutriscore_grade_not_empty(data):
     return True if data.get("nutriscore_grade") else False
 
 
+def normalize_categories_without_prefix(data):
+    """Remove prefix on categories strings."""
+    return (
+        data.update(categories=re.sub(r"\w{2}\:", "", data.get("categories"))) or data
+    )
+
+
 class OffCleaner(Cleaner):
     """State."""
 
@@ -153,6 +166,10 @@ class OffCleaner(Cleaner):
         require_product_name_fr_not_empty,
         require_stores_not_empty,
         require_nutriscore_grade_not_empty,
+    ]
+
+    normalizers = [
+        normalize_categories_without_prefix,
     ]
 
 
