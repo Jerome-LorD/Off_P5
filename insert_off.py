@@ -15,7 +15,34 @@ logger = logging.getLogger(__name__)
 
 
 class Downloader:
-    """Download and insert into DB."""
+    """Download and extract."""
+
+    def __init__(self, nb_page):
+        """Init."""
+        self.url = "https://fr.openfoodfacts.org/cgi/search.pl?"
+        self.payload = {
+            "json": 1,
+            "action": "process",
+            "page_size": 1000,
+            "page": nb_page,
+        }
+        self.headers = {
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+        }
+
+    def extract_data(self):
+        """Extract data from API."""
+        try:
+            r = requests.get(self.url, headers=self.headers, params=self.payload)
+            self.result = r.json()
+            self.products = self.result["products"]
+            return self.products
+        except requests.exceptions.RequestException as e:
+            raise SystemExit(e)
+
+
+class Insert:
+    """Docstr."""
 
     def __init__(self, user, password):
         """Init."""
@@ -29,26 +56,6 @@ class Downloader:
             password=self.password,
         )
         self.cursor = self.cnx.cursor()
-
-    def extract_data(self, nb_page):
-        """Extract data from API."""
-        self.url = "https://fr.openfoodfacts.org/cgi/search.pl?"
-        self.payload = {
-            "json": 1,
-            "action": "process",
-            "page_size": 1000,
-            "page": nb_page,
-        }
-        self.headers = {
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
-        }
-        try:
-            r = requests.get(self.url, headers=self.headers, params=self.payload)
-            self.result = r.json()
-            self.products = self.result["products"]
-            return self.products
-        except requests.exceptions.RequestException as e:
-            raise SystemExit(e)
 
     def insert_data(self, data):
         """Insert data into DB."""
@@ -120,7 +127,7 @@ class Cleaner:
     normalizers: List = []
 
     def is_valid(self, data):
-        """Verify if the key has a value"""
+        """Verify if the key has a value."""
         for validator in self.validators:
             if not validator(data):
                 return False
@@ -175,8 +182,9 @@ class OffCleaner(Cleaner):
 
 if __name__ == "__main__":
     for page in range(1, 6):
-        con = Downloader("offp5", "spoff")
-        extracted = con.extract_data(page)
+        down_off = Downloader(page)
+        extracted = down_off.extract_data()
         cleaner = OffCleaner()
         cleaned = cleaner.clean(extracted)
-        con.insert_data(cleaned)
+        construct = Insert("offp5", "spoff")
+        construct.insert_data(cleaned)
