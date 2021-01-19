@@ -118,24 +118,17 @@ class Cleaner:
     """Clean all data."""
 
     validators: List = []
-    normalizers: List = []
 
     def is_valid(self, data):
-        """Vérifie si la clé 'data' est présente et retourne 1 ou 0."""
+        """Vérify if the key has a value."""
         for validator in self.validators:
             if not validator(data):
                 return False
         return True
 
-    def normalize(self, data):
-        """Docstr."""
-        for normalizer in self.normalizers:
-            data = normalizer(data)
-        return data
-
     def clean(self, collection):
-        """Ne retourne que les données à 1 par is_valid."""
-        return [self.normalize(data) for data in collection if self.is_valid(data)]
+        """Return a data list if is_valid is True."""
+        return [data for data in collection if self.is_valid(data)]
 
 
 def require_product_name_fr_not_empty(data):
