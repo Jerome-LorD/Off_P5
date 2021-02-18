@@ -15,26 +15,33 @@ NEXT_PAGE = "next-page"
 PREVIOUS_PAGE = "previous-page"
 
 MENU_CHOICES = {
-    "1": "Faire une recherche d'aliment à remplacer",
-    "2": "Chercher un substitut sauvegardé.",
+    "1": "Rechercher un aliment à remplacer",
+    "2": "Rechercher un substitut sauvegardé.",
 }
 
-HEADER = f'---{colored("        Pur Beurre App         ", "blue")}---'
-DASHES = "-------------------------------------"
+HEADER = f'------{colored("        Pur Beurre App         ", "blue")}------'
+DASHES = "-------------------------------------------"
+SUB_HEADER = f'-------------- {colored("Voulez vous", "blue")} : --------------\n'
 
-MSG_ERROR = "Cette commande n'est pas reconnue."
+MSG_CHOICE = "\nSaisissez votre choix : "
+
+MSG_ERROR = colored("Cette commande n'est pas reconnue.\n", "red")
+ERROR = False
 
 MSG_SAVE = {
     "1": "Sauvegarder le substitut",
+    "2": "Retrouver mes aliments substitués.",
 }
 
 MSG_SAVED = {
-    "1": "Retrouver mes aliments substitués.",
+    "1": "Rechercher un autre aliment à remplacer",
+    "2": "Retrouver mes aliments substitués.",
 }
 
 MSG_BEST_PRODUCTS = {
     "1": "Chercher un substitut sauvegardé",
-    "2": "Faire une recherche d'aliment à remplacer",
+    "2": "Rechercher un autre aliment à remplacer",
 }
 
-WALK = True
+BACK_OR_QUIT = f'\n{colored("m", "yellow")} : Revenir au menu\n\
+{colored("q", "yellow")} : Quitter\n'
