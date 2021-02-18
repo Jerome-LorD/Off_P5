@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """Select saved products module."""
-from app.settings import QUIT_APP, MSG_ERROR
+from app import settings as s
 from app.views.main_page import View
 from app.models.product import Product
 
@@ -14,7 +14,7 @@ class SelectSavedProducts:
         self.product: Product = Product()
         self.substitutes = self.product.retrieve_substitute()
         self.indexes = [str(index) for index in range(1, len(self.substitutes) + 1)]
-        self.possible_commands = ["back-to-menu", QUIT_APP]  # settings
+        self.possible_commands = ["back-to-menu", s.QUIT_APP]
 
     def display(self):
         """Display the saved products."""
@@ -22,11 +22,12 @@ class SelectSavedProducts:
 
     def get_input(self):
         """Get the input."""
-        choice = input(self.view.input_saved_products(self.substitutes))
+        choice = self.view.input_saved_products(self.substitutes)
+        choice = input(s.MSG_CHOICE)
         if choice == "m":
             return "back-to-menu"
         if choice == "q":
-            return QUIT_APP
+            return s.QUIT_APP
         return choice
 
     def update(self, command: str):
@@ -37,10 +38,11 @@ class SelectSavedProducts:
             return product, "best-product"
 
         elif command in self.possible_commands:
-            if command == QUIT_APP:
+            if command == s.QUIT_APP:
                 self.walk = False
             if command == "back-to-menu":
                 return "back-to-menu"
         else:
-            return MSG_ERROR
+            s.ERROR = True
+            return s.MSG_ERROR
         return command
