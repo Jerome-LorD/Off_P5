@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 """View menu module."""
-from app.settings import HEADER, DASHES
+from app import settings as s
+from colorama import init
+from termcolor import colored
+
+
+init()
 
 
 class ViewMenu:
@@ -8,20 +13,24 @@ class ViewMenu:
 
     def __init__(self):
         """Init."""
-        self.choices = {
-            "1": "Quel aliment souhaitez-vous remplacer ?",
-            "2": "Retrouver mes aliments substitués.",
-        }
 
     def header(self):
         """Display the header."""
-        return f"\n{DASHES}\n{HEADER}\n{DASHES}"
+        return f"\n{s.DASHES}\n{s.HEADER}\n{s.DASHES}"
 
-    def display_menu_principal(self):
-        """Get the menu principal."""
+    def display_main_menu(self):
+        """Display the main menu."""
         print(self.header())
         print("\nMenu principal\n")
+        if s.ERROR:
+            print(s.MSG_ERROR)
 
-    def get_input_message(self):
-        """Get the input message."""
-        return "\n".join([f"{k}: {v} " for k, v in self.choices.items()])
+    def input_message_menu(self):
+        """Input message menu."""
+        choice = "\n".join(
+            [
+                colored(f"{index}", "yellow") + f". {item} "
+                for index, item in s.MENU_CHOICES.items()
+            ]
+        )
+        print(choice)
