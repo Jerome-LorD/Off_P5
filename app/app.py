@@ -3,12 +3,11 @@
 
 from typing import Dict
 
-from app.settings import QUIT_APP
+from app import settings as s
 
 from app.controllers.select_menu import SelectMenu
 from app.controllers.select_category import SelectCategory
 from app.controllers.select_product import SelectProduct
-from app.controllers.select_detail import SelectDetail
 from app.controllers.select_detail_tst import SelectDetailTst
 from app.controllers.select_substitute import SelectSubstitute
 from app.controllers.select_saved_products import SelectSavedProducts
@@ -20,23 +19,7 @@ from app.views.main_page import View
 
 
 class Application:
-    """Pur Beurre app class.
-
-    1 - Quel aliment souhaitez-vous remplacer ?
-    2 - Retrouver mes aliments substitués.
-
-    L'utilisateur sélectionne 1. Le programme pose les questions suivantes à
-    l'utilisateur et ce dernier sélectionne les réponses :
-
-    Sélectionnez la catégorie. [Plusieurs propositions associées à un chiffre.
-    L'utilisateur entre le chiffre correspondant et appuie sur entrée]
-    Sélectionnez l'aliment. [Plusieurs propositions associées à un chiffre.
-    L'utilisateur entre le chiffre correspondant à l'aliment choisi et appuie sur entrée
-    Le programme propose un substitut, sa description, un magasin ou l'acheter
-    (le cas échéant) et un lien vers la page d'Open Food Facts concernant cet aliment.
-    L'utilisateur a alors la possibilité d'enregistrer le résultat dans la base
-    de données.
-    """
+    """Pur Beurre app class."""
 
     Controllers: Dict[int, object] = {1: SelectCategory, 2: SelectSavedProducts}
 
@@ -45,9 +28,8 @@ class Application:
         self.controller = SelectMenu()
         self.view = View()
         self.product: Product = Product()
-        self.select_detail = SelectDetail(product_id=None, category_id=None)
-        # self.select_detail_tst = SelectDetailTst(instance=())
         self.walk = True
+
         self.category_id: int = None
         self.product_id: int = None
 
@@ -61,7 +43,6 @@ class Application:
 
     def update(self, command: str):
         """Update."""
-        # breakpoint()
         if isinstance(command, str) and command.startswith("select-menu-"):
             command = command[-1]
             controller = [
@@ -78,19 +59,21 @@ class Application:
             self.category_id = int(command.replace("select-category-", ""))
             self.controller = SelectProduct(category_id=self.category_id)
 
-        # if command == "already":
-        #     self.controller = SubstituteAlreadyInDb()
-
         if command == "save":
             self.controller = SaveSubstitute()
 
         if isinstance(command, tuple):
-            if command[1].startswith("best-product"):
+            if command[1] == "best-product":
                 self.controller = SelectBestProduct(instance=command)
-            if command[1].startswith("product"):
+            if command[1] == "product":
                 self.controller = SelectDetailTst(instance=command)
-            if command[1].startswith("substitute"):
+            if command[1] == "substitute":
                 self.controller = SelectSubstitute(instance=command)
 
-        if command == QUIT_APP:
+        if command == s.MSG_ERROR:
+            s.ERROR = True
+        else:
+            s.ERROR = False
+
+        if command == s.QUIT_APP:
             self.walk = False
