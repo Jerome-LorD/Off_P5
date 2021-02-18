@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """Select menu module."""
-from app.settings import MENU_CHOICES, QUIT_APP, MSG_ERROR
+from app import settings as s
 from app.views.view_menu import ViewMenu
 
 
@@ -10,14 +10,15 @@ class SelectMenu:
     def __init__(self):
         """Init."""
         self.view: ViewMenu = ViewMenu()
-        self.indexes = [str(index) for index in range(1, len(MENU_CHOICES) + 1)]
-        self.possible_commands = [QUIT_APP]  # settings
+        self.indexes = [str(index) for index in range(1, len(s.MENU_CHOICES) + 1)]
+        self.possible_commands = [s.QUIT_APP]
 
     def get_input(self):
         """Get the input."""
-        choice = input(self.view.get_input_message())
+        choice = self.view.input_message_menu()
+        choice = input(s.MSG_CHOICE)
         if choice == "q":
-            return QUIT_APP
+            return s.QUIT_APP
         return choice
 
     def update(self, command: str):
@@ -26,12 +27,13 @@ class SelectMenu:
             return f"select-menu-{command}"
 
         elif command in self.possible_commands:
-            if command == QUIT_APP:
+            if command == s.QUIT_APP:
                 self.walk = False
         else:
-            return MSG_ERROR
+            s.ERROR = True
+            return s.MSG_ERROR
         return command
 
     def display(self):
         """Display the menu."""
-        return self.view.display_menu_principal()
+        return self.view.display_main_menu()
