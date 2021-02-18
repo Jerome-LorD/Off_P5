@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """Select category module."""
-from app.settings import QUIT_APP, MSG_ERROR
+from app import settings as s
 
 from app.models.category import Category
 from app.views.main_page import View
@@ -14,13 +14,18 @@ class SelectCategory:
         self.view = View()
         self.categories = Category.retrieve()
         self.indexes = [str(index) for index in range(1, len(self.categories) + 1)]
-        self.possible_commands = [QUIT_APP]
+        self.possible_commands = [s.QUIT_APP]
+
+    def display(self):
+        """Display."""
+        self.view.display_categories(categories=self.categories)
 
     def get_input(self):
         """Get input."""
-        choice = input(self.view.input_message(self.categories))
+        choice = self.view.input_message(self.categories)
+        choice = input(s.MSG_CHOICE)
         if choice == "q":
-            return QUIT_APP
+            return s.QUIT_APP
         return choice
 
     def update(self, command: str):
@@ -30,12 +35,9 @@ class SelectCategory:
             return f"select-category-{command.product_id}"
 
         elif command in self.possible_commands:
-            if command == QUIT_APP:
+            if command == s.QUIT_APP:
                 self.walk = False
         else:
-            return MSG_ERROR
+            s.ERROR = True
+            return s.MSG_ERROR
         return command
-
-    def display(self):
-        """Display."""
-        self.view.display_categories(categories=self.categories)
