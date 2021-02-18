@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 """Main page view."""
-# from termcolor import colored
+from colorama import init
+from termcolor import colored
 
-from app.settings import HEADER, DASHES, MSG_SAVE, MSG_BEST_PRODUCTS, MENU_CHOICES
+from app import settings as s
 
 from app.models.category import Category
 from app.models.product import Product
 
-# from app.controllers.select_category import SelectCategory
-
-# from app.controllers.select_product import SelectProduct
+init(autoreset=True)
 
 
 class View:
@@ -23,25 +22,24 @@ class View:
 
     def header(self):
         """Display the header."""
-        return f"\n{DASHES}\n{HEADER}\n{DASHES}"
+        return f"\n{s.DASHES}\n{s.HEADER}\n{s.DASHES}"
 
     def display_categories(self, categories):
         """Display the categories."""
         print(self.header())
         print("\nSelectionnez une catégorie :\n")
+        if s.ERROR:
+            print(s.MSG_ERROR)
 
     def display_products(self, products, max_pages, page):
         """Display the products."""
         print(self.header())
-        print(f"\nSélectionnez un produit : page {page} / {max_pages}\n")
-
-    #     def display_detail(self, details):
-    #         """Display the products details."""
-    #         print("\nDétail du produit sélectionné :\n")
-    #         print(
-    #             f"Produit :{details.name}\nMarque : {details.brand}\nMagasin :\
-    # {details.stores}\nURL : {details.url}\nNutriscore : {details.nutriscore}"
-    #         )
+        print(
+            f"\nSélectionnez un produit : page {page} / {max_pages}\n\
+{colored('n', 'yellow')} : Page suivante\n{colored('p', 'yellow')} : Page précédente\n"
+        )
+        if s.ERROR:
+            print(s.MSG_ERROR)
 
     def display_detail_tst(self, instance):
         """Display the products details."""
@@ -57,17 +55,24 @@ class View:
         print("\nDétail du produit de substitution :\n")
         print(
             f"Produit : {details.name}\nMarque : {details.brand}\nMagasin :\
- {details.stores}\nURL : {details.url}\nNutriscore : {details.nutriscore.capitalize()}\n"
+ {details.stores}\nURL : {details.url}\nNutriscore : \
+ {details.nutriscore.capitalize()}\n"
         )
-        print("-------------- Voulez vous : --------------\n")
-        # print("\n1. Sauvegarder le produit\n2. Revenir au menu principal\n")
-        self.walk = False
+        print(s.SUB_HEADER)
+        print(s.BACK_OR_QUIT)
+        if s.ERROR:
+            print(s.MSG_ERROR)
 
     def display_no_subsitute(self):
         """Display the substitute."""
-        print("\nNous n'avons pas trouvé de produit avec un meilleur nutriscore.\n")
-        print("-------------- Voulez vous : --------------\n")
-        self.walk = False
+        print(
+            "\nIl n'y à pas de produit avec un meilleur\
+ nutriscore dans cette catégorie.\n"
+        )
+        print(s.SUB_HEADER)
+        print(s.BACK_OR_QUIT)
+        if s.ERROR:
+            print(s.MSG_ERROR)
 
     def display_no_subsitute_confirmed(self, instance):
         """Display the substitute."""
@@ -78,61 +83,97 @@ class View:
  {instance.nutriscore.capitalize()}"
         )
         print("\nCe produit à le meilleur nutriscore dans sa catégorie.\n")
-        print("-------------- Voulez vous : --------------\n")
+        print(s.SUB_HEADER)
+        print(s.BACK_OR_QUIT)
+        if s.ERROR:
+            print(s.MSG_ERROR)
 
     def display_no_better_nutriscore(self):
         """Display the substitute."""
         print("\nVotre choix est très bon, le nutriscore est le meilleur possible.\n")
-        print("-------------- Voulez vous : --------------\n")
-        self.walk = False
+        print(s.SUB_HEADER)
+        print(s.BACK_OR_QUIT)
+        if s.ERROR:
+            print(s.MSG_ERROR)
 
     def display_save_substitute(self):
         """Display the substitute."""
         print("\nLe produit à bien été enregistré dans votre liste.\n")
-        print("-------------- Voulez vous : --------------\n")
+        print(s.SUB_HEADER)
+        print(s.BACK_OR_QUIT)
+        if s.ERROR:
+            print(s.MSG_ERROR)
 
     def display_saved_products(self, substitutes):
         """Display the saved products as substitutes."""
-        print("\nListe des substituts que vous avez sélectionné :\n")
-        # print(
-        #     "\n".join(
-        #         [
-        #             f"{index}. {substitute}"
-        #             for index, substitute in enumerate(substitutes, 1)
-        #         ]
-        #     )
-        # )
-
-        # print("\nCréer un input ici pour sélectionner un produits.\n")
-        # self.walk = False
+        print("\nLes substituts que vous avez sélectionné :\n")
 
     def input_message(self, list_chosen):
         """Input the message."""
-        return "\n".join(
-            [f"{nb}. {item.name} " for nb, item in enumerate(list_chosen, 1)]
+        choice = "\n".join(
+            [
+                colored(f"{nb}", "yellow") + f". {item.name} "
+                for nb, item in enumerate(list_chosen, 1)
+            ]
         )
+        print(choice)
 
     def input_message_categories(self):
         """Input the message."""
-        return "\n".join(
-            [f"{nb}. {item.name} " for nb, item in enumerate(self.categories, 1)]
+        choice = "\n".join(
+            [
+                colored(f"{nb}", "yellow") + f". {item.name} "
+                for nb, item in enumerate(self.categories, 1)
+            ]
         )
+        print(choice)
 
     def input_message_products(self):
         """Input the message."""
-        return "\n".join(
-            [f"{nb}. {item.name} " for nb, item in enumerate(self.products, 1)]
+        choice = "\n".join(
+            [
+                colored(f"{nb}", "yellow") + f". {item.name} "
+                for nb, item in enumerate(self.products, 1)
+            ]
         )
+        print(choice)
 
     def input_save(self):
         """Input the message."""
-        return "\n".join([f"{nb}. {item} " for nb, item in MSG_SAVE.items()])
+        choice = "\n".join(
+            [
+                colored(f"{nb}", "yellow") + f". {item} "
+                for nb, item in s.MSG_SAVE.items()
+            ]
+        )
+        print(choice)
+
+    def input_saved(self):
+        """Input the message."""
+        choice = "\n".join(
+            [
+                colored(f"{nb}", "yellow") + f". {item} "
+                for nb, item in s.MSG_SAVED.items()
+            ]
+        )
+        print(choice)
 
     def input_saved_products(self, substitutes):
         """Input the message."""
-        return "\n".join([f"{nb}. {item} " for nb, item in enumerate(substitutes, 1)])
-        # return "\n".join([f"{nb}. {item} " for nb, item in MSG_SAVE.items()])
+        choice = "\n".join(
+            [
+                colored(f"{nb}", "yellow") + f". {item}"
+                for nb, item in enumerate(substitutes, 1)
+            ]
+        )
+        print(choice)
 
     def input_best_product(self):
         """Input the message."""
-        return "\n".join([f"{nb}. {item} " for nb, item in MENU_CHOICES.items()])
+        choice = "\n".join(
+            [
+                colored(f"{nb}", "yellow") + f". {item} "
+                for nb, item in s.MENU_CHOICES.items()
+            ]
+        )
+        print(choice)
