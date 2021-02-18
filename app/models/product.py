@@ -3,7 +3,6 @@
 import os
 
 from dotenv import load_dotenv, find_dotenv
-from typing import List
 
 from app.models.database import Database
 from app.models.category import Category
@@ -15,14 +14,6 @@ load_dotenv(find_dotenv())
 off_user = os.getenv("OFF_USER")
 off_password = os.getenv("OFF_PASSWD")
 off_database = os.getenv("OFF_DB")
-
-
-class ProductInstance:
-    """Keep product instance."""
-
-    def __init__(self, name):  # pour le test, juste avec name.
-        """Init."""
-        self.name: str = name
 
 
 class Product:
@@ -52,7 +43,6 @@ class Product:
         self.page_index = 1
         self.limit = 30
         self.total_lines = 0
-        self.product_instance_lst: List[ProductInstance] = []
 
         self.db = Database(off_user, off_password, off_database)
         self.category: Category = Category()
@@ -120,12 +110,6 @@ class Product:
         else:
             self.db.cnx.commit()
 
-        #     self.cursor.execute(select_id_query, self.name)
-        #     id = cursor.fetchone()[0]
-        #     self.product_id = id
-        # else:
-        #     self.cursor.execute(update_query, self.id)
-
     def is_substitute_in_db(self, substitute_id):
         """Check if substitute already in db."""
         self.db.cursor.execute(
@@ -142,7 +126,7 @@ class Product:
             return False
 
     def delete(self):
-        """Delete something."""
+        """Delete saved product."""
         pass
 
     def get_total_lines(self, pk):
@@ -199,39 +183,8 @@ class Product:
         )
         return [Product(*line) for line in cls.db.cursor.fetchall()]
 
-    # @classmethod
-    # def retrieve_substitute(cls, pk: int):
-    #     """Retrieve the products."""
-    #     cls.db = Database(off_user, off_password, off_database)
-    #     cls.db.cursor.execute(
-    #         "SELECT p.name, p.id, p.brand, p.stores, p.url, ns.type\
-    #             FROM substitutes s\
-    #             JOIN products p\
-    #             ON p.id = s.substitute_id\
-    #             JOIN nutriscore ns\
-    #             ON ns.id = p.nutriscore_id\
-    #             WHERE s.substitute_id = (%s);",
-    #         (pk,),
-    #     )
-    #     return [Product(*line) for line in cls.db.cursor.fetchall()]
-
-    # @classmethod
-    # def list_saved_substitutes(cls):
-    #     """List all saved subsitutes."""
-    #     cls.db = Database(off_user, off_password, off_database)
-    #     cls.db.cursor.execute(
-    #         "SELECT substitute.name\
-    #         FROM substitutes s\
-    #         INNER JOIN products substitute\
-    #         ON s.substitute_id = substitute.id\
-    #         INNER JOIN products substituted\
-    #         ON s.substituted_id = substituted.id",
-    #     )
-
-    # @classmethod
     def retrieve_substitute_from_pk(self, pk: int):
         """Retrieve the products."""
-        # self.db = Database(off_user, off_password, off_database)
         self.db.cursor.execute(
             "SELECT p.name, ns.type, p.brand, p.stores, p.url, p.id\
                 FROM substitutes s\
@@ -248,7 +201,6 @@ class Product:
     def retrieve_substitute(cls):
         """Retrieve the saved substitute."""
         cls.db = Database(off_user, off_password, off_database)
-        # ns.type substitute.name AS substitute_name, s.substitute_id
         cls.db.cursor.execute(
             "SELECT p.name, p.id, p.brand, p.stores, p.url\
                 FROM substitutes s\
@@ -269,7 +221,7 @@ class Product:
         cls.db = Database(off_user, off_password, off_database)
         cls.db.cursor.execute(
             "SELECT products.name, nutriscore.type, products.brand, products.stores,\
-                 products.url, products.id\
+        products.url, products.id\
         FROM products\
         JOIN nutriscore\
         ON nutriscore.id = products.nutriscore_id\
@@ -310,49 +262,9 @@ class Product:
                 cat_id=self.best_cat.category_id
             )
             if substitute:
-                # instance = substitute[0]
-                # if instance.nutriscore == self.best_cat.nutriscore:
-                #     return None
-                # else:
                 return substitute[0]
             offset += 1
 
             offset_limit = 5
             if offset == offset_limit:
                 return None
-
-
-if __name__ == "__main__":
-    prod = Product()
-    res = prod.get_total_lines(20)
-    product = Product.list(20, prod.limit, prod.offset)
-
-    print(f"Il y a {res} produits dans la catégorie sélectionnée.")
-    print(f"Avec 30 lignes par page, il y a {prod.max_pages} pages à consulter.")
-
-    print("\nliste des produits :\n")
-
-    c = input(
-        "\n".join([f"{index}. {produit}" for index, produit in enumerate(product, 1)])
-    )
-    instance = product[int(c) - 1]
-    print(instance.pk, "instance.pk")
-
-    substitute = Product().find_substitute(selected_product=instance.pk)
-
-    print(substitute.pk)
-
-    rep = input("Sauvegarder le résultat ? O/N ")
-    if rep == "O":
-        if Product().is_substitute_in_db(substitute.pk):
-            print("produit déjà en db")
-        else:
-            Product().save_substitute(instance.pk, substitute.pk)
-            print("le produit à été sauvegardé.")
-
-    # if Product().is_substitute_in_db(substitute.pk):
-    #     #     return True
-    #     # return False
-    #     print("En db", True)
-    # else:
-    #     print("Pas en db", False)
