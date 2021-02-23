@@ -1,25 +1,15 @@
 #!/usr/bin/env python
 """Download, clean and inserts datas into db."""
-import mysql.connector
-
 import os
-
-from dotenv import load_dotenv, find_dotenv
-
-from app.settings import DB_NAME
 import re
 
-# import logging
-
+import mysql.connector
 import requests
-
-from app.models.database import Database
-
+from dotenv import load_dotenv, find_dotenv
 from typing import List
 
-
-# logging.basicConfig(level=logging.DEBUG)
-# logger = logging.getLogger(__name__)
+from app.settings import DB_NAME
+from app.models.database import Database
 
 
 load_dotenv(find_dotenv())
@@ -72,9 +62,7 @@ class Insert:
 
     def insert_data(self, products_data):
         """Insert data into DB."""
-        # debug = 0
         for product in products_data:
-            # breakpoint()
             if product:
                 prod_name = product["product_name_fr"]
                 prod_url = product["url"]
@@ -113,8 +101,6 @@ class Insert:
 
                     for category in categories:
                         category = category.strip()
-                        # print(debug, category)
-
                         self.db.cursor.execute(
                             "INSERT IGNORE INTO categories (name)\
                                 VALUES (%s);",
@@ -134,7 +120,6 @@ class Insert:
                             (last_products_id, last_categories_id),
                         )
                     self.db.cnx.commit()
-                    # debug += 1
                 except mysql.connector.Error as err:
                     print("Failed inserting into database: {}".format(err))
                     exit(1)
@@ -159,7 +144,6 @@ class Cleaner:
         """Normalize some entries."""
         for normalizer in self.normalizers:
             data = normalizer(data)
-        # breakpoint()
         return data
 
     def clean(self, collection):
@@ -216,20 +200,6 @@ def normalize_categories_without_suffix_and_bad_datas(data):
         return data
 
 
-def normalize_categories_without_prefix(data):
-    """Remove prefix on categories strings."""
-    return (
-        data.update(
-            categories=re.sub(
-                r"(\,\s{0,}\w{2}\:\w$)|(^\w{2}\:\w\,)|(\,\w$)|(\w{2}\:\w\,)|\,Test",
-                "",
-                data.get("categories"),
-            )
-        )
-        or data
-    )
-
-
 class OffCleaner(Cleaner):
     """State."""
 
@@ -243,23 +213,6 @@ class OffCleaner(Cleaner):
     ]
 
     normalizers = [
-        # normalize_categories_without_prefix,
         normalize_product_without_cariage_return,
         normalize_categories_without_suffix_and_bad_datas,
     ]
-
-
-# dans 3 modules différents c'est plus logique, à part si tu penses que ça peut tenir
-# dans un module pour condenser le code
-if __name__ == "__main__":
-    for page in range(1, 8):
-        down_off = Downloader(page)
-        extracted = down_off.extract_data()
-
-        cleaner = OffCleaner()
-        cleaned = cleaner.clean(extracted)
-        # breakpoint()
-        construct = Insert()
-        construct.insert_data(cleaned)
-    # insert = Insert()
-    # print(insert.is_data_in_db())
