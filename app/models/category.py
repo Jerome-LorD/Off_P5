@@ -92,7 +92,8 @@ class Category:
             JOIN nutriscore ns\
             ON p.nutriscore_id = ns.id\
             WHERE p.id = %s\
-            GROUP BY tot_produtcs_in_fewest_category ASC LIMIT 1 OFFSET %s",
+            GROUP BY tot_produtcs_in_fewest_category\
+            ORDER BY tot_produtcs_in_fewest_category ASC LIMIT 1 OFFSET %s",
             (
                 pk,
                 offset,
