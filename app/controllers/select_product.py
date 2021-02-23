@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 """Select product module."""
-from app import settings as s
 from app.models.product import Product
+from app.views.view import View
 
-from app.views.main_page import View
+from app import settings as s
 
 
 class SelectProduct:
@@ -21,12 +21,31 @@ class SelectProduct:
         )
 
         self.indexes = [str(index) for index in range(1, len(self.products) + 1)]
-        self.possible_commands = ["next-page", "previous-page", s.QUIT_APP]
+        self.possible_commands = [
+            s.BACK_TO_MENU,
+            s.NEXT_PAGE,
+            s.PREVIOUS_PAGE,
+            s.QUIT_APP,
+        ]
+
+    def display(self):
+        """Display."""
+        self.products = self.product.list(
+            self.category_id, self.product.limit, self.product.offset
+        )
+
+        self.view.display_products(
+            products=self.products,
+            max_pages=self.product.max_pages,
+            page=self.product.page_index,
+        )
 
     def get_input(self):
         """Get input."""
-        choice = self.view.input_message(self.products)
+        choice = self.view.input_products(products=self.products)
         choice = input(s.MSG_CHOICE)
+        if choice == "m":
+            return s.BACK_TO_MENU
         if choice == "n":
             return s.NEXT_PAGE
         if choice == "p":
@@ -38,8 +57,8 @@ class SelectProduct:
     def update(self, command: str):
         """Update the commands."""
         if command in self.indexes:
-            instance = self.products[int(command) - 1]
-            return instance, "product"
+            substituted = self.products[int(command) - 1]
+            return f"selected-product-{substituted.pk}"
 
         elif command in self.possible_commands:
             if command == s.QUIT_APP:
@@ -55,15 +74,3 @@ class SelectProduct:
             s.ERROR = True
             return s.MSG_ERROR
         return command
-
-    def display(self):
-        """Display."""
-        self.products = self.product.list(
-            self.category_id, self.product.limit, self.product.offset
-        )
-
-        self.view.display_products(
-            products=self.products,
-            max_pages=self.product.max_pages,
-            page=self.product.page_index,
-        )
