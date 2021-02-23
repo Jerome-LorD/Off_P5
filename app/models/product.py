@@ -27,8 +27,7 @@ class Product:
         stores: str = "",
         url: str = "",
         pk: int = None,
-        category_id: int = None,
-        bonus2: int = None,
+        substituted_id: int = None,
     ):
         """Init."""
         self.name = name
@@ -37,8 +36,7 @@ class Product:
         self.stores = stores
         self.url = url
         self.pk = pk
-        self.category_id = category_id
-        self.bonus2 = bonus2
+        self.substituted_id = substituted_id
 
         self.page_index = 1
         self.limit = 30
@@ -54,7 +52,7 @@ class Product:
     def __repr__(self):
         """Return Format str."""
         return f"{self.name} - {self.nutriscore} - {self.brand} - {self.stores}\
- - {self.url} - {self.pk} - {self.category_id} - {self.bonus2} "
+ - {self.url} - {self.pk} - {self.substituted_id}"
 
     @property
     def offset(self):
@@ -85,7 +83,7 @@ class Product:
         return False
 
     def save_substitute(self, substituted_id, substitute_id):
-        """Save Product into the database."""
+        """Save Product into database."""
         self.db.cursor.execute(
             "SELECT s.substitute_id, s.substituted_id\
             FROM substitutes s\
@@ -124,10 +122,6 @@ class Product:
             return True
         else:
             return False
-
-    def delete(self):
-        """Delete saved product."""
-        pass
 
     def get_total_lines(self, pk):
         """Get total product per category."""
@@ -178,7 +172,7 @@ class Product:
                 ON cp.categories_id = c.id\
                 JOIN nutriscore ns\
                 ON p.nutriscore_id = ns.id\
-                WHERE p.id = (%s);",
+                WHERE p.id = (%s) LIMIT 1",
             (pk,),
         )
         return [Product(*line) for line in cls.db.cursor.fetchall()]
@@ -202,7 +196,7 @@ class Product:
         """Retrieve the saved substitute."""
         cls.db = Database(off_user, off_password, off_database)
         cls.db.cursor.execute(
-            "SELECT p.name, p.id, p.brand, p.stores, p.url\
+            "SELECT p.name, ns.type, p.brand, p.stores, p.url, p.id, substituted.id\
                 FROM substitutes s\
                 JOIN products substitute\
                 ON s.substitute_id = substitute.id\
@@ -216,7 +210,7 @@ class Product:
         return [Product(*line) for line in cls.db.cursor.fetchall()]
 
     @classmethod
-    def find_substitute_from_category(cls, cat_id):
+    def find_substitute_from_category(cls, best_category_id):
         """Find substitute."""
         cls.db = Database(off_user, off_password, off_database)
         cls.db.cursor.execute(
@@ -241,8 +235,8 @@ class Product:
             WHERE categories.id = %s  )\
             ORDER BY RAND() LIMIT 1",
             (
-                cat_id,
-                cat_id,
+                best_category_id,
+                best_category_id,
             ),
         )
         return [Product(*line) for line in cls.db.cursor.fetchall()]
@@ -253,13 +247,16 @@ class Product:
         offset = 0
 
         while not substitute:
-            res = Category().find_best_category(pk=selected_product, offset=offset)
-            self.best_cat = res[0]
-            if not self.best_cat:
+            substituted = Category().find_best_category(
+                pk=selected_product, offset=offset
+            )
+            substituted = substituted[0]
+
+            if not substituted:
                 return None
 
             substitute = self.find_substitute_from_category(
-                cat_id=self.best_cat.category_id
+                best_category_id=substituted.best_category_id
             )
             if substitute:
                 return substitute[0]
