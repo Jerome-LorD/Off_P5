@@ -16,4 +16,7 @@ This application is standalone, to use it you must follow these indications:
 
 ## The MVC pattern
 
-...
+Starting choice -> the strategy pattern
+
+This pattern aims to give controllers the same behavior.
+It is often used in various frameworks to provide users with the ability to modify the behavior of a class without extending it. The structure and navigation are really simplified.
