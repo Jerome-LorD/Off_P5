@@ -25,9 +25,9 @@ class Category:
         brand: str = "",
         stores: str = "",
         url: str = "",
-        id: int = None,
-        category_id: int = None,
-        bonus2: int = None,
+        pk: int = None,
+        best_category_id: int = None,
+        total_produtcs_in_fewest_category: int = None,
     ):
         """Init."""
         self.name = name
@@ -35,11 +35,9 @@ class Category:
         self.brand = brand
         self.stores = stores
         self.url = url
-        self.product_id = id
-        self.category_id = category_id
-        self.bonus2 = bonus2
-
-        # self.command = SelectCategory().get_input()
+        self.product_id = pk
+        self.best_category_id = best_category_id
+        self.total_produtcs_in_fewest_category = total_produtcs_in_fewest_category
 
         self.walk: bool = True
 
@@ -49,13 +47,13 @@ class Category:
 
     def __repr__(self):
         """Return Format str."""
-        # return self.__str__()
         return f"{self.name} - {self.nutriscore} - {self.brand} - {self.stores}\
- - {self.url} - {self.product_id} - {self.category_id}"
+ - {self.url} - {self.product_id} - {self.best_category_id} -\
+ {self.total_produtcs_in_fewest_category}"
 
     @classmethod
     def retrieve(cls):
-        """Select the 30  categories."""
+        """Select 30 categories."""
         cls.db = Database(off_user, off_password, off_database)
         cls.db.cursor.execute(
             "SELECT categories.name, categories.id, COUNT(products.id) as total_products\
@@ -68,7 +66,7 @@ class Category:
                         ORDER BY total_products  DESC LIMIT 30"
         )
 
-        return [Category(name=line[0], id=line[1]) for line in cls.db.cursor.fetchall()]
+        return [Category(name=line[0], pk=line[1]) for line in cls.db.cursor.fetchall()]
 
     @classmethod
     def find_best_category(cls, pk, offset):
@@ -101,47 +99,3 @@ class Category:
             ),
         )
         return [Category(*line) for line in cls.db.cursor.fetchall()]
-
-    # l'input sert à modifier les controllers ou quitter l'application dans les
-    # grandes lignes. modifier un controller = changer de page = changer de vue
-
-    # - dans le controller de selection des catégories, tu:
-    # -- affiche les catégories
-    # -- affiches les commandes
-    # -- récupère l'input utilisateur
-    # -- et retourne une commande associée
-    # -- l'application récupère la commande et  dans sa méthode update, peut la décrire
-    #  et mettre à jour le controller pour aller à la page de catégorie associée
-
-    def get_command(self, command):
-        """Récupère la commande de l'input de SelectCategory."""
-        categories = Category.retrieve()
-        reponse = categories[int(command) - 1]
-        return reponse.product_id
-
-    # def update(self):
-    #     """Update."""
-    #     if QUIT_APP == "q":
-    #         self.walk = False
-
-
-# if __name__ == "__main__":
-#     categories = Category().retrieve()
-
-#     choice_category = input(
-#         "\n".join([f"{nb}. {item} " for nb, item in enumerate(categories, 1)])
-#     )
-#     choix = categories[int(choice_category) - 1]
-
-#     print(choix.id)
-# print(category.retrieve())
-
-# breakpoint()
-# for nb, item in enumerate(category.retrieve(), 1):
-#     print(f"{nb} - {item}")
-
-# for i, j in enumerate(category.retrieve(), 1):
-#     print(i, j)
-
-# for i in range(len(category)):
-#     print(category[i])
