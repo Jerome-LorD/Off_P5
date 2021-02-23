@@ -1,31 +1,33 @@
 #!/usr/bin/env python
 """SubstituteAlreadyInDb module."""
 from app import settings as s
-from app.views.main_page import View
+from app.views.view import View
 from app.models.product import Product
 
 
-class SelectBestProduct:
+class SelectFavorites:
     """SelectBestProduct class."""
 
-    def __init__(self, instance):
+    def __init__(self, substitute_id, substituted_id):
         """Init."""
         self.view: View = View()
         self.product: Product = Product()
-        self.instance = instance[0]
-        self.substitute = self.product.find_substitute(
-            selected_product=self.instance.pk
+        self.substituted_id = substituted_id
+        self.substitute_id = substitute_id
+        self.substitute = self.product.retrieve_substitute_from_pk(
+            pk=self.substitute_id
         )
+        self.substituted = self.product.retrieve(self.substituted_id)
         self.indexes = [str(index) for index in range(1, len(s.MENU_CHOICES) + 1)]
-        self.possible_commands = ["back-to-menu", s.QUIT_APP]  # settings
+        self.possible_commands = ["back-to-menu", s.QUIT_APP]
 
     def display(self):
         """Display."""
-        return self.view.display_no_subsitute_confirmed(instance=self.instance)
+        return self.view.display_favorites(self.substituted[0], self.substitute)
 
-    def get_input(self):
+    def get_input(self) -> str:
         """Get the input."""
-        choice = self.view.input_best_product()
+        choice = self.view.input_menu_best_product()
         choice = input(s.MSG_CHOICE)
         if choice == "m":
             return "back-to-menu"
@@ -33,7 +35,7 @@ class SelectBestProduct:
             return s.QUIT_APP
         return choice
 
-    def update(self, command: str):
+    def update(self, command: str) -> str:
         """Update."""
         if command in self.indexes:
             return f"select-menu-{command}"
