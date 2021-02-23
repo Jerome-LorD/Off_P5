@@ -3,9 +3,7 @@
 This Python project is a substitute research (console) application for a given food.
 The application hosts in database (MySQL) about 3000 food products from openfoodfacts.
 
---------------------------
-
-For ease of use, here are some prerequisites: 
+## For ease of use, here are some prerequisites: 
 
 **Python 3.5+** compatible (typing module)
 
