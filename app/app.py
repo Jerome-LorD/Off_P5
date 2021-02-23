@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 """App file with Application class."""
-
 from typing import Dict
 
 from app import settings as s
@@ -8,14 +7,10 @@ from app import settings as s
 from app.controllers.select_menu import SelectMenu
 from app.controllers.select_category import SelectCategory
 from app.controllers.select_product import SelectProduct
-from app.controllers.select_detail_tst import SelectDetailTst
 from app.controllers.select_substitute import SelectSubstitute
 from app.controllers.select_saved_products import SelectSavedProducts
 from app.controllers.save_substitute import SaveSubstitute
-from app.controllers.select_best_product import SelectBestProduct
-
-from app.models.product import Product
-from app.views.main_page import View
+from app.controllers.select_favorites import SelectFavorites
 
 
 class Application:
@@ -26,12 +21,7 @@ class Application:
     def __init__(self):
         """Init."""
         self.controller = SelectMenu()
-        self.view = View()
-        self.product: Product = Product()
         self.walk = True
-
-        self.category_id: int = None
-        self.product_id: int = None
 
     def run(self):
         """Run main method."""
@@ -43,7 +33,7 @@ class Application:
 
     def update(self, command: str):
         """Update."""
-        if isinstance(command, str) and command.startswith("select-menu-"):
+        if command.startswith("select-menu-"):
             command = command[-1]
             controller = [
                 instance
@@ -52,23 +42,28 @@ class Application:
             ][0]
             self.controller = controller()
 
-        if str(command).startswith("back-to-menu"):
+        if command.startswith("back-to-menu"):
             self.controller = SelectMenu()
 
-        if str(command).startswith("select-category-"):
-            self.category_id = int(command.replace("select-category-", ""))
-            self.controller = SelectProduct(category_id=self.category_id)
+        if command.startswith("select-category-"):
+            category_id = int(command.replace("select-category-", ""))
+            self.controller = SelectProduct(category_id=category_id)
 
         if command == "save":
             self.controller = SaveSubstitute()
 
-        if isinstance(command, tuple):
-            if command[1] == "best-product":
-                self.controller = SelectBestProduct(instance=command)
-            if command[1] == "product":
-                self.controller = SelectDetailTst(instance=command)
-            if command[1] == "substitute":
-                self.controller = SelectSubstitute(instance=command)
+        if command.startswith("selected-product-"):
+            product_id = int(command.replace("selected-product-", ""))
+            self.controller = SelectSubstitute(product_id=product_id)
+
+        if command.startswith("substitute-substituted-"):
+            command = command.replace("substitute-substituted-", "")
+            index = command.index("&")
+            substitute_id = int(command[:index])
+            substituted_id = int(command[index + 1 :])
+            self.controller = SelectFavorites(
+                substitute_id=substitute_id, substituted_id=substituted_id
+            )
 
         if command == s.MSG_ERROR:
             s.ERROR = True
