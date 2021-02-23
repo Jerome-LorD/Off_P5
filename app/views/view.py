@@ -110,7 +110,7 @@ class View:
         """
         print(self.header())
         print(
-            f"\n{s.YOU_HAVE_SELECTED}{product.name},{s.NUTRISCORE}\
+            f"\n{s.YOU_HAVE_SELECTED} {product.name},{s.NUTRISCORE}\
  {product.nutriscore.capitalize()}"
         )
         print(f"\n{s.NO_SUBSTITUTE}\n")
