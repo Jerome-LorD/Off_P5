@@ -21,8 +21,6 @@ def main():
     create.create_db()
     insert = Insert()
 
-    pbar = ProgressBar(widgets=[Percentage(), Bar()], maxval=8).start()
-
     if insert.is_data_in_db():
         # Check if the database contains at least 3000 entries.
         print(s.MSG_DB_READY)
@@ -32,6 +30,7 @@ def main():
 
     else:
         print(s.MSG_DB_CREATION)
+        pbar = ProgressBar(widgets=[Percentage(), Bar()], maxval=8).start()
         for page in range(1, 8):
             down_off = Downloader(page)
             extracted = down_off.extract_data()
@@ -45,7 +44,7 @@ def main():
             if page == 7:
                 app = Application()
                 app.run()
-    pbar.finish()
+        pbar.finish()
 
 
 if __name__ == "__main__":
