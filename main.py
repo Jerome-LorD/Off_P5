@@ -1,5 +1,14 @@
 #!/usr/bin/env python
 """Main application."""
+import time
+
+from progressbar import (
+    Bar,
+    Percentage,
+    ProgressBar,
+)
+
+from app import settings as s
 from app.app import Application
 from app.models.create_off import Create
 from app.models.insert_off import Downloader, Insert, OffCleaner
@@ -12,15 +21,17 @@ def main():
     create.create_db()
     insert = Insert()
 
+    pbar = ProgressBar(widgets=[Percentage(), Bar()], maxval=8).start()
+
     if insert.is_data_in_db():
         # Check if the database contains at least 3000 entries.
-        print("La base de donnée est prête.\n")
+        print(s.MSG_DB_READY)
 
         app = Application()
         app.run()
 
     else:
-        print("Creation de la db... Patientez le temps de la procédure.")
+        print(s.MSG_DB_CREATION)
         for page in range(1, 8):
             down_off = Downloader(page)
             extracted = down_off.extract_data()
@@ -28,6 +39,13 @@ def main():
             cleaned = cleaner.clean(extracted)
             construct = Insert()
             construct.insert_data(cleaned)
+            time.sleep(0.01)
+            pbar.update(page + 1)
+
+            if page == 7:
+                app = Application()
+                app.run()
+    pbar.finish()
 
 
 if __name__ == "__main__":
