@@ -199,10 +199,7 @@ class Product:
                 WHERE s.substitute_id = (%s);",
             (pk,),
         )
-        # breakpoint()
-        res = [Product(*line) for line in self.db.cursor.fetchall()][0]
-
-        return res
+        return [Product(*line) for line in self.db.cursor.fetchall()][0]
 
     @classmethod
     def retrieve_substitute(cls):
