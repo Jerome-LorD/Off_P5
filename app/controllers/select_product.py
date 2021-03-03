@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Select product module."""
 from app.models.product import Product
-from app.views.view import View
+from app.views.view_product import ViewProduct
 
 from app import settings as s
 
@@ -11,7 +11,7 @@ class SelectProduct:
 
     def __init__(self, category_id):
         """Init."""
-        self.view = View()
+        self.view: ViewProduct = ViewProduct()
         self.product = Product()
         self.category_id = int(category_id)
         self.product.get_total_lines(self.category_id)
@@ -42,8 +42,8 @@ class SelectProduct:
 
     def get_input(self):
         """Get input."""
-        choice = self.view.input_products(products=self.products)
-        choice = input(s.MSG_CHOICE)
+        self.view.input_products(products=self.products)
+        choice = input(self.view.msg_choice)
         if choice == "m":
             return s.BACK_TO_MENU
         if choice == "n":
@@ -54,8 +54,8 @@ class SelectProduct:
             return s.QUIT_APP
         return choice
 
-    def update(self, command: str):
-        """Update the commands."""
+    def update(self, command: str) -> str:
+        """Update the controller."""
         if command in self.indexes:
             substituted = self.products[int(command) - 1]
             return f"selected-product-{substituted.pk}"

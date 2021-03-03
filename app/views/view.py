@@ -2,7 +2,7 @@
 """View module."""
 import os
 
-from colorama import init
+from colorama import init  # type: ignore
 from termcolor import colored
 
 from app import settings as s
@@ -16,10 +16,54 @@ init(autoreset=True)
 class View:
     """View class."""
 
+    ANSI_LEN = len(colored("", "blue", attrs=["bold"]))
+
     def __init__(self):
         """Init."""
         self.category: Category = Category()
         self.product: Product = Product()
+
+        self.del_substitute = True
+
+        self.menu_choices = [
+            "Rechercher un aliment à remplacer",
+            "Retrouver mes aliments substitués.",
+        ]
+
+        self.back = f'{colored(self.justify("m", 1), "yellow")} : {s.BACK}'
+        self.quit = f'\n{colored(self.justify("q", 1), "yellow")} : {s.QUIT}\n'
+        self.msg_choice = f"\n\n{self.justify(s.MSG_CHOICE, 3)}"
+        self.select_category = colored(self.justify(s.SELECT_CATEGORY, 2), "cyan")
+        self.select_product = colored(self.justify(s.SELECT_PRODUCT, 2), "cyan")
+
+        self.product = self.justify(s.PRODUCT, 1)
+        self.brand = self.justify(s.BRAND, 1)
+        self.stores = self.justify(s.STORES, 1)
+        self.url = self.justify(s.URL, 1)
+        self.nutriscore = self.justify(s.NUTRISCORE, 1)
+
+        self.msg_error = colored(self.justify(s.MSG_ERROR, 3), "red")
+        self.no_substitute = colored(self.justify(s.NO_SUBSTITUTE, 3), "red")
+        self.save_confirm = colored(self.justify(s.SAVE_CONFIRM, 3), "green")
+        self.saved_products = self.justify(s.SAVED_PRODUCTS, 2)
+        self.substituted_detail = colored(self.justify(s.SUBSTITUTED_DETAIL, 2), "cyan")
+        self.substitute_detail = colored(self.justify(s.SUBSTITUTE_DETAIL, 2), "cyan")
+        self.confirm_title = self.justify(s.CONFIRM_TITLE, 3)
+        self.you_have_selected = colored(self.justify(s.YOU_HAVE_SELECTED, 3), "cyan")
+        self.del_alert = self.justify(colored(s.DEL_ALERT, "red"), 3)
+        self.othr_cmd = self.centerize(s.OTHER_COMMANDS, s.CHAR_LENGHT)
+        self.app_title = self.centerize(s.APP_TITLE, s.CHAR_LENGHT)
+        self.head = self.justify(
+            f"{s.DSH * 6}{colored(self.app_title, 'blue', attrs=['bold'])}{s.DSH * 6}",
+            1,
+        )
+        self.dashes = self.justify(s.DSH * (len(self.head) - self.ANSI_LEN - 1), 1)
+        self.footer = self.justify(
+            f"{s.DSH * 6}{colored(self.othr_cmd, 'blue', attrs=['bold'])}{s.DSH * 6}\n",
+            1,
+        )
+        self.next_prev = f"{colored(self.justify('p', 1), 'yellow')} : Page précédente\
+ | {colored('n', 'yellow')} : Page suivante\n"
 
     def clear(self):
         """Clear the terminal."""
@@ -29,207 +73,11 @@ class View:
         """Justify the text."""
         return "{:>{}}".format(text, (len(text) + lenght))
 
+    def centerize(self, text="", lenght: int = 0):
+        """Centerize the text."""
+        return "{: ^{}}".format(text, (len(text) + lenght))
+
     def header(self):
         """Display the header."""
         self.clear()
-        return f"\n{s.DASHES}\n{s.HEADER}\n{s.DASHES}"
-
-    def display_main_menu(self):
-        """Display the main menu."""
-        print(self.header())
-
-    def display_categories(self):
-        """Display the categories."""
-        print(self.header())
-        print(f"\n{s.SELECT_CATEGORY}\n")
-
-    def display_products(self, products, max_pages, page):
-        """Display the products."""
-        print(self.header())
-        print(
-            f"\n{s.SELECT_PRODUCT} page {page} / {max_pages}\n\n{s.NEXT_PREVIOUS_PAGE}"
-        )
-
-    def display_details(self, substituted, substitute):
-        """Display the saved products details."""
-        print(self.header())
-        print(f"\n{s.SUBSTITUTED_DETAIL} :\n")
-        for item in [substituted]:
-            print(
-                f"{s.PRODUCT} : {item.name}\
-\n{s.BRAND} : {item.brand.replace(',', ', ')}\
-\n{s.STORES} : {item.stores.replace(',', ', ')}\
-\n{s.URL} : {item.url}\
-\n{s.NUTRISCORE.capitalize()} : {item.nutriscore.capitalize()}"
-            )
-        print(f"\n{s.SUBSTITUTE_DETAIL} :\n")
-        for item in [substitute]:
-            print(
-                f"{s.PRODUCT} : {item.name}\
-\n{s.BRAND} : {item.brand.replace(',', ', ')}\
-\n{s.STORES} : {item.stores.replace(',', ', ')}\
-\n{s.URL} : {item.url}\
-\n{s.NUTRISCORE.capitalize()} : {item.nutriscore.capitalize()}"
-            )
-        print(f"{s.CR}{s.SUB_HEADER}")
-        print(s.BACK_OR_QUIT)
-        if s.ERROR:
-            print(s.MSG_ERROR)
-
-    def display_favorites(self, substituted, substitute):
-        """Display the saved products."""
-        print(self.header())
-        print(f"\n{s.SAVED_PRODUCTS}\n")
-        print(f"\n{s.SUBSTITUTED_DETAIL} :\n")
-        for item in [substituted]:
-            print(
-                f"{s.PRODUCT} : {item.name}\
-\n{s.BRAND} : {item.brand.replace(',', ', ')}\
-\n{s.STORES} : {item.stores.replace(',', ', ')}\
-\n{s.URL} : {item.url}\
-\n{s.NUTRISCORE.capitalize()} : {item.nutriscore.capitalize()}"
-            )
-        print(f"\n{s.SUBSTITUTE_DETAIL} :\n")
-        for item in [substitute]:
-            print(
-                f"{s.PRODUCT} : {item.name}\
-\n{s.BRAND} : {item.brand.replace(',', ', ')}\
-\n{s.STORES} : {item.stores.replace(',', ', ')}\
-\n{s.URL} : {item.url}\
-\n{s.NUTRISCORE.capitalize()} : {item.nutriscore.capitalize()}"
-            )
-        print(f"{s.CR}{s.SUB_HEADER}")
-        print(s.BACK_OR_QUIT)
-        if s.ERROR:
-            print(s.MSG_ERROR)
-
-    def display_no_subsitute(self, product):
-        """Display an alert message.
-
-        If there is no substitute because nutriscore is worse than A.
-        """
-        print(self.header())
-        print(
-            f"\n{s.YOU_HAVE_SELECTED} {product.name},{s.NUTRISCORE}\
- {product.nutriscore.capitalize()}"
-        )
-        print(f"\n{s.NO_SUBSTITUTE}\n")
-        print(f"{s.CR}{s.SUB_HEADER}")
-        print(s.BACK_OR_QUIT)
-        if s.ERROR:
-            print(s.MSG_ERROR)
-
-    def display_no_better_nutriscore(self, product):
-        """Display an alert message if no substitute since the nutriscore is A."""
-        print(self.header())
-        print(
-            f"\n{s.YOU_HAVE_SELECTED} : {product.name},{s.NUTRISCORE}\
- {product.nutriscore.capitalize()}"
-        )
-        print(f"\n{s.BEST_CHOICE}\n")
-        print(f"{s.CR}{s.SUB_HEADER}")
-        print(s.BACK_OR_QUIT)
-        if s.ERROR:
-            print(s.MSG_ERROR)
-
-    def display_save_substitute(self):
-        """Display confirmation of saving substitute."""
-        print(self.header())
-        print(f"\n{s.CONFIRM_TITLE}\n")
-        print(f"\n{s.CONFIRMATION}\n")
-        print(f"{s.CR}{s.SUB_HEADER}")
-        print(s.BACK_OR_QUIT)
-        if s.ERROR:
-            print(s.MSG_ERROR)
-
-    def display_saved_products(self):
-        """Display products saved as substitutes."""
-        print(self.header())
-        print(f"\n{s.SAVED_PRODUCTS}\n")
-
-    def input_message_menu(self):
-        """Input the menu message."""
-        print()
-        choice = "\n".join(
-            [
-                colored(str(index), "yellow") + ". " + item
-                for index, item in s.MENU_CHOICES.items()
-            ]
-        )
-        print(choice)
-        print(f"{s.CR}{s.SUB_HEADER}")
-        if s.ERROR:
-            print(s.MSG_ERROR)
-        print(s.BACK_OR_QUIT)
-
-    def input_categories(self, categories):
-        """Input the categories."""
-        choice = "\n".join(
-            [
-                colored(self.justify(str(index), 1), "yellow") + ". " + item.name
-                for index, item in enumerate(categories, 1)
-            ]
-        )
-        print(choice)
-        print(f"{s.CR}{s.SUB_HEADER}")
-        if s.ERROR:
-            print(s.MSG_ERROR)
-        print(s.BACK_OR_QUIT)
-
-    def input_products(self, products):
-        """Input the products."""
-        choice = "\n".join(
-            [
-                colored(self.justify(str(index), 1), "yellow") + ". " + item.name
-                for index, item in enumerate(products, 1)
-            ]
-        )
-        print(choice)
-        print(f"{s.CR}{s.SUB_HEADER}")
-        if s.ERROR:
-            print(s.MSG_ERROR)
-        print(s.BACK_OR_QUIT)
-
-    def input_save(self):
-        """Input the save message."""
-        choice = "\n".join(
-            [
-                colored(str(index), "yellow") + ". " + item
-                for index, item in s.MSG_SAVE.items()
-            ]
-        )
-        print(choice)
-
-    def input_saved(self):
-        """Input the saved message."""
-        choice = "\n".join(
-            [
-                colored(str(index), "yellow") + ". " + item
-                for index, item in s.MSG_SAVED.items()
-            ]
-        )
-        print(choice)
-
-    def input_saved_products(self, substitutes):
-        """Input the saved products ."""
-        choice = "\n".join(
-            [
-                colored(self.justify(str(index), 1), "yellow") + ". " + item.name
-                for index, item in enumerate(substitutes, 1)
-            ]
-        )
-        print(choice)
-        print(f"{s.CR}{s.SUB_HEADER}")
-        if s.ERROR:
-            print(s.MSG_ERROR)
-        print(s.BACK_OR_QUIT)
-
-    def input_menu_best_product(self):
-        """Input the saved products details."""
-        choice = "\n".join(
-            [
-                colored(index, "yellow") + ". " + item
-                for index, item in s.MENU_CHOICES.items()
-            ]
-        )
-        print(choice)
+        return f"\n{self.dashes}\n{self.head}\n{self.dashes}"

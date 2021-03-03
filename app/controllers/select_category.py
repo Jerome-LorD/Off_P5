@@ -3,7 +3,7 @@
 from app import settings as s
 
 from app.models.category import Category
-from app.views.view import View
+from app.views.view_category import ViewCategory
 
 
 class SelectCategory:
@@ -11,7 +11,7 @@ class SelectCategory:
 
     def __init__(self):
         """Init."""
-        self.view = View()
+        self.view: ViewCategory = ViewCategory()
         self.categories = Category.retrieve()
         self.indexes = [str(index) for index in range(1, len(self.categories) + 1)]
         self.possible_commands = [s.BACK_TO_MENU, s.QUIT_APP]
@@ -22,8 +22,8 @@ class SelectCategory:
 
     def get_input(self):
         """Get input."""
-        choice = self.view.input_categories(categories=self.categories)
-        choice = input(s.MSG_CHOICE)
+        self.view.input_categories(categories=self.categories)
+        choice = input(self.view.msg_choice)
         if choice == "m":
             return s.BACK_TO_MENU
         if choice == "q":

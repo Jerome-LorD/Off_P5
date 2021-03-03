@@ -2,6 +2,7 @@
 """Select menu module."""
 from app import settings as s
 from app.views.view import View
+from app.views.view_menu import ViewMenu
 
 
 class SelectMenu:
@@ -10,17 +11,20 @@ class SelectMenu:
     def __init__(self):
         """Init."""
         self.view: View = View()
-        self.indexes = [str(index) for index in range(1, len(s.MENU_CHOICES) + 1)]
+        self.view_menu: ViewMenu = ViewMenu()
+        self.indexes = [
+            str(index) for index in range(1, len(self.view.menu_choices) + 1)
+        ]
         self.possible_commands = [s.QUIT_APP]
 
     def display(self):
         """Display the menu."""
-        return self.view.display_main_menu()
+        return self.view_menu.display_main_menu()
 
     def get_input(self):
         """Get the input."""
-        choice = self.view.input_message_menu()
-        choice = input(s.MSG_CHOICE)
+        self.view_menu.input_message_menu()
+        choice = input(self.view.msg_choice)
         if choice == "q":
             return s.QUIT_APP
         return choice

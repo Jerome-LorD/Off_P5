@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 """Database cnx."""
 
-import mysql.connector
+import mysql.connector  # type: ignore
 import os
 
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv, find_dotenv  # type: ignore
 
 load_dotenv(find_dotenv())
 

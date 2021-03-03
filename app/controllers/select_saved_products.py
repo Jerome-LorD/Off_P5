@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Select saved products module."""
 from app import settings as s
-from app.views.view import View
+from app.views.view_saved_products import ViewSavedProducts
 from app.models.product import Product
 
 
@@ -10,7 +10,7 @@ class SelectSavedProducts:
 
     def __init__(self):
         """Init."""
-        self.view: View = View()
+        self.view: ViewSavedProducts = ViewSavedProducts()
         self.product: Product = Product()
         self.substitutes = self.product.retrieve_substitute()
         self.indexes = [str(index) for index in range(1, len(self.substitutes) + 1)]
@@ -22,8 +22,8 @@ class SelectSavedProducts:
 
     def get_input(self):
         """Get the input."""
-        choice = self.view.input_saved_products(substitutes=self.substitutes)
-        choice = input(s.MSG_CHOICE)
+        self.view.input_saved_products(substitutes=self.substitutes)
+        choice = input(self.view.msg_choice)
         if choice == "m":
             return "back-to-menu"
         if choice == "q":
@@ -31,7 +31,7 @@ class SelectSavedProducts:
         return choice
 
     def update(self, command: str) -> str:
-        """Update."""
+        """Update the controller."""
         if command in self.indexes:
             substitute = self.substitutes[int(command) - 1]
             substituted = self.product.retrieve(substitute.substituted_id)

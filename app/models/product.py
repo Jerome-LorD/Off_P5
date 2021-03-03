@@ -28,6 +28,7 @@ class Product:
         url: str = "",
         pk: int = None,
         substituted_id: int = None,
+        substitutes_id: int = None,
     ):
         """Init."""
         self.name = name
@@ -37,6 +38,7 @@ class Product:
         self.url = url
         self.pk = pk
         self.substituted_id = substituted_id
+        self.substitutes_id = substitutes_id
 
         self.page_index = 1
         self.limit = 30
@@ -52,7 +54,7 @@ class Product:
     def __repr__(self):
         """Return Format str."""
         return f"{self.name} - {self.nutriscore} - {self.brand} - {self.stores}\
- - {self.url} - {self.pk} - {self.substituted_id}"
+ - {self.url} - {self.pk} - {self.substituted_id} - {self.substitutes_id}"
 
     @property
     def offset(self):
@@ -107,6 +109,14 @@ class Product:
                 self.db.cnx.commit()
         else:
             self.db.cnx.commit()
+
+    def delete_substitutes(self, substitutes_id):
+        """Delete substitutes row."""
+        self.db.cursor.execute(
+            "DELETE FROM `substitutes` WHERE `substitutes`.`id` = %s",
+            (substitutes_id,),
+        )
+        self.db.cnx.commit()
 
     def is_substitute_in_db(self, substitute_id):
         """Check if substitute already in db."""
@@ -180,7 +190,7 @@ class Product:
     def retrieve_substitute_from_pk(self, pk: int):
         """Retrieve the products."""
         self.db.cursor.execute(
-            "SELECT p.name, ns.type, p.brand, p.stores, p.url, p.id\
+            "SELECT p.name, ns.type, p.brand, p.stores, p.url, p.id, p.id, s.id\
                 FROM substitutes s\
                 JOIN products p\
                 ON p.id = s.substitute_id\
@@ -189,7 +199,10 @@ class Product:
                 WHERE s.substitute_id = (%s);",
             (pk,),
         )
-        return [Product(*line) for line in self.db.cursor.fetchall()][0]
+        # breakpoint()
+        res = [Product(*line) for line in self.db.cursor.fetchall()][0]
+
+        return res
 
     @classmethod
     def retrieve_substitute(cls):

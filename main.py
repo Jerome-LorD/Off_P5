@@ -2,7 +2,7 @@
 """Main application."""
 import time
 
-from progressbar import (
+from progressbar import (  # type: ignore
     Bar,
     Percentage,
     ProgressBar,

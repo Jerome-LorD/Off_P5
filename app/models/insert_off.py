@@ -3,10 +3,10 @@
 import os
 import re
 
-import mysql.connector
+import mysql.connector  # type: ignore
 import requests
-from dotenv import load_dotenv, find_dotenv
-from typing import List
+from dotenv import load_dotenv, find_dotenv  # type: ignore
+from typing import List, Any
 
 from app.settings import DB_NAME
 from app.models.database import Database
@@ -130,8 +130,8 @@ class Insert:
 class Cleaner:
     """Clean all data."""
 
-    validators: List = []
-    normalizers: List = []
+    validators: List[Any] = []
+    normalizers: List[Any] = []
 
     def is_valid(self, data):
         """Verify if the key has a value."""

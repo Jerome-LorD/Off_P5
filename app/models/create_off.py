@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 """Create database offdb."""
-import mysql.connector
+import mysql.connector  # type: ignore
 
 import os
 
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv, find_dotenv  # type: ignore
 
 from app.models.database import Database
 
