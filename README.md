@@ -12,7 +12,7 @@ This application is standalone, to use it you must follow these indications:
 -  `git clone link`
 -  create a virtual environment in which you must install the modules from the requirements.txt file
 
-To run the app, you must create the `.env` file at the same level as the main.py file :
+To run the app, you must create the `.env` file at the same level as the `main.py` file :
 ```ini
 DB_USER=your_login (e.g. root)
 DB_PASSWD=your_passord
