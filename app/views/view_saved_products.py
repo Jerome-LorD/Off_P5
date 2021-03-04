@@ -10,13 +10,13 @@ init(autoreset=True)
 
 
 class ViewSavedProducts(View):
-    """View Product class."""
+    """View saved products class."""
 
     def __init__(self):
         super().__init__()
 
     def display_saved_products(self):
-        """Display products saved as substitutes."""
+        """Display saved products as substitutes."""
         print(self.header())
         print(f"\n{self.saved_products}\n")
 

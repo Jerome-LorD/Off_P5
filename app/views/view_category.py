@@ -10,7 +10,7 @@ init(autoreset=True)
 
 
 class ViewCategory(View):
-    """View Menu class."""
+    """View category class."""
 
     def __init__(self):
         super().__init__()

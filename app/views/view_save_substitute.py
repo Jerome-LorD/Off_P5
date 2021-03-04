@@ -10,7 +10,7 @@ init(autoreset=True)
 
 
 class ViewSaveSubstitute(View):
-    """View Product class."""
+    """View save substitute class."""
 
     def __init__(self):
         super().__init__()

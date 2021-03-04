@@ -7,7 +7,7 @@ from app.views.view_category import ViewCategory
 
 
 class SelectCategory:
-    """Select category."""
+    """Select category class."""
 
     def __init__(self):
         """Init."""
@@ -17,7 +17,7 @@ class SelectCategory:
         self.possible_commands = [s.BACK_TO_MENU, s.QUIT_APP]
 
     def display(self):
-        """Display."""
+        """Display the categories."""
         self.view.display_categories()
 
     def get_input(self):

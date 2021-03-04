@@ -6,7 +6,7 @@ from app.models.product import Product
 
 
 class SaveSubstitute:
-    """Save substitute."""
+    """Save substitute class."""
 
     def __init__(self):
         """Init."""

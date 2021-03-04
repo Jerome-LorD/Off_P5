@@ -6,7 +6,7 @@ from app.models.product import Product
 
 
 class SelectSavedProducts:
-    """Select menu class."""
+    """Select saved products class."""
 
     def __init__(self):
         """Init."""

@@ -10,7 +10,7 @@ init(autoreset=True)
 
 
 class ViewFavorites(View):
-    """View Product class."""
+    """View favorites class."""
 
     def __init__(self):
         """Init."""

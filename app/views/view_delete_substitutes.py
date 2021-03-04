@@ -10,7 +10,7 @@ init(autoreset=True)
 
 
 class ViewDeleteSubstitutes(View):
-    """View Product class."""
+    """View delete substitute class."""
 
     def __init__(self):
         super().__init__()

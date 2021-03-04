@@ -6,7 +6,7 @@ from app.models.product import Product
 
 
 class SelectFavorites:
-    """SelectBestProduct class."""
+    """Select favorites class."""
 
     def __init__(self, substitute_id, substituted_id):
         """Init."""
@@ -25,7 +25,7 @@ class SelectFavorites:
         self.possible_commands = ["del_favorite", "back-to-menu", s.QUIT_APP]
 
     def display(self):
-        """Display."""
+        """Display the favorites."""
         return self.view.display_favorites(self.substituted[0], self.substitute)
 
     def get_input(self) -> str:

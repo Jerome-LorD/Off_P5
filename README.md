@@ -10,7 +10,7 @@ The application hosts in database (MySQL) about 3000 food products from openfood
 This application is standalone, to use it you must follow these indications:
 - by clicking on the green button "Code", get the link and
 -  `git clone link`
--  create a virtual environment in which you must install the modules from the requirements.txt file
+-  create a virtual environment in which you must install the modules from the `requirements.txt` file
 
 Copy / paste this block without the comments into an `.env` file that you will create at the root of the project and modify only `DB_USER` and `DB_PASSWD`: 
 ```ini

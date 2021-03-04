@@ -10,7 +10,7 @@ init(autoreset=True)
 
 
 class ViewSubstitute(View):
-    """View Menu class."""
+    """View substitute class."""
 
     def __init__(self):
         super().__init__()
