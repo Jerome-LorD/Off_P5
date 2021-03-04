@@ -14,8 +14,8 @@ This application is standalone, to use it you must follow these indications:
 
 Copy / paste this block without the comments into an `.env` file that you will create at the root of the project and modify only `DB_USER` and `DB_PASSWD`: 
 ```ini
-DB_USER=your_own_db_login (e.g. root)
-DB_PASSWD=your_own_db_passord
+DB_USER=<your_own_db_login>
+DB_PASSWD=<your_own_db_passord>
 DB_HOST=localhost
 OFF_PASSWD=spoff
 OFF_USER=offp5
