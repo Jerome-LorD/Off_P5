@@ -1,6 +1,6 @@
 # P5 OpenFoodFacts
 
-This Python project is a substitute research (console) application for a given food.
+This Python project is an application to find a substitute (console) for a given food.
 The application hosts in database (MySQL) about 3000 food products from openfoodfacts.
 
 ## For ease of use, here are some prerequisites: 
@@ -16,15 +16,11 @@ Copy / paste this block without the comments into an `.env` file that you will c
 ```ini
 DB_USER=your_own_db_login (e.g. root)
 DB_PASSWD=your_own_db_passord
-
 DB_HOST=localhost
 OFF_PASSWD=spoff
 OFF_USER=offp5
 OFF_DB=offdb
 ```
-
-
-
 ## The patterns
 
 The app works on the model of MVC design and strategy patterns.
