@@ -21,7 +21,6 @@ class SelectFavorites:
         self.indexes = [
             str(index) for index in range(1, len(self.view.menu_choices) + 1)
         ]
-        # breakpoint()
         self.possible_commands = ["del_favorite", "back-to-menu", s.QUIT_APP]
 
     def display(self):
